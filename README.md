@@ -1,1 +1,1 @@
-# django-auth-app-using-angular
+# django-auth

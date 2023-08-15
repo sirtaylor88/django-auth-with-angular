@@ -1,0 +1,10 @@
+black
+Django
+django-cors-headers
+django-extensions
+djangorestframework
+drf-yasg
+pyjwt
+pytest
+pytest-django
+pytest-factoryboy
