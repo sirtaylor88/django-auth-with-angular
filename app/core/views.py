@@ -1,6 +1,7 @@
 import random
 import string
 
+import pyotp
 from django.core.mail import send_mail
 from django.utils import timezone
 from rest_framework import exceptions
@@ -36,16 +37,40 @@ class LoginAPIView(APIView):
         if user is None or not user.check_password(password):
             raise exceptions.AuthenticationFailed("Invalid credentials")
 
+        if user.tfa_secret:
+            return Response({"id": user.id})
+
+        secret = pyotp.random_base32()
+        otp_auth_url = pyotp.totp.TOTP(secret).provisioning_uri(issuer_name="My App")
+
+        return Response({"id": user.id, "secret": secret, "otp_auth_url": otp_auth_url})
+
+
+class TwoFactorAPIView(APIView):
+    def post(self, request):
+        id = request.data["id"]
+        user = models.User.objects.filter(pk=id).first()
+        if not user:
+            raise exceptions.AuthenticationFailed("Invalid credentials")
+
+        secret = user.tfa_secret if user.tfa_secret != "" else request.data["secret"]
+        if not pyotp.TOTP(secret).verify(request.data["code"]):
+            raise exceptions.AuthenticationFailed("Invalid credentials")
+
+        if user.tfa_secret == "":
+            user.tfa_secret = secret
+            user.save(update_fields=["tfa_secret"])
+
         start_date = timezone.now()
         access_token = create_token(
-            user.id,
+            id,
             "access_secret",
             "HS256",
             start_date=start_date,
             duration_dict={"seconds": 30},
         )
         refresh_token = create_token(
-            user.id,
+            id,
             "refresh_secret",
             "HS256",
             start_date=start_date,

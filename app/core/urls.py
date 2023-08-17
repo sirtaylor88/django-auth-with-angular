@@ -10,4 +10,5 @@ urlpatterns = [
     path("logout", views.LogoutAPIView.as_view(), name="logout"),
     path("forgot", views.ForgotAPIView.as_view(), name="forgot"),
     path("reset", views.ResetAPIView.as_view(), name="reset"),
+    path("two-factor", views.TwoFactorAPIView.as_view(), name="two-factor"),
 ]

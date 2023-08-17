@@ -5,6 +5,7 @@ django-extensions
 djangorestframework
 drf-yasg
 pyjwt
+pyotp
 pytest
 pytest-django
 pytest-factoryboy

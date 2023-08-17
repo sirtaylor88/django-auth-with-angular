@@ -12,6 +12,8 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ForgotComponent } from './pages/forgot/forgot.component';
 import { ResetComponent } from './pages/reset/reset.component';
+import { FormComponent } from './pages/login/form/form.component';
+import { AuthenticatorComponent } from './pages/login/authenticator/authenticator.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,9 @@ import { ResetComponent } from './pages/reset/reset.component';
     HomeComponent,
     NavComponent,
     ForgotComponent,
-    ResetComponent
+    ResetComponent,
+    FormComponent,
+    AuthenticatorComponent
   ],
   imports: [
     BrowserModule,
