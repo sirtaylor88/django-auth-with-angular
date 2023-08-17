@@ -17,12 +17,14 @@ export class ResetComponent {
     private route: ActivatedRoute, // to get token from the url
     private router: Router // navigate between components
   ) { }
+
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       password: '',
       password_confirm: ''
     })
   }
+  
   submit(){
     const formData = this.form.getRawValue();
     const data = {

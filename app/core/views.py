@@ -4,6 +4,8 @@ import string
 import pyotp
 from django.core.mail import send_mail
 from django.utils import timezone
+from google.auth.transport.requests import Request as GoogleRequest
+from google.oauth2 import id_token
 from rest_framework import exceptions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -183,3 +185,58 @@ class ResetAPIView(APIView):
         user.save()
 
         return Response({"message": "success"})
+
+
+class GoogleAuthAPIView(APIView):
+    """View to authenticate using Google account."""
+
+    def post(self, request):
+        token = request.data["token"]
+
+        googleUser = id_token.verify_token(token, GoogleRequest())
+        if not googleUser:
+            raise exceptions.AuthenticationFailed("Unauthenticated")
+
+        user = models.User.objects.filter(email=googleUser["email"]).first()
+
+        if not user:
+            user = models.User.objects.create(
+                first_name=googleUser["given_name"],
+                last_name=googleUser["family_name"],
+                email=googleUser["email"],
+            )
+            user.set_password(token)
+            user.save()
+
+        start_date = timezone.now()
+        access_token = create_token(
+            user.id,
+            "access_secret",
+            "HS256",
+            start_date=start_date,
+            duration_dict={"seconds": 30},
+        )
+        refresh_token = create_token(
+            user.id,
+            "refresh_secret",
+            "HS256",
+            start_date=start_date,
+            duration_dict={"days": 7},
+        )
+
+        # Save the refresh token to DB to allow to refresh the page
+        # without the need to re-login
+        models.UserToken.objects.create(
+            user=user,
+            token=refresh_token,
+            expired_at=start_date + timezone.timedelta(days=7),
+        )
+
+        response = Response()
+        # Set httponly so only the backend can receive the cookie
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+        response.data = {
+            "token": access_token,
+        }
+
+        return response

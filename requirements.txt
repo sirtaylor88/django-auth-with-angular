@@ -4,6 +4,7 @@ django-cors-headers
 django-extensions
 djangorestframework
 drf-yasg
+google-auth
 pyjwt
 pyotp
 pytest

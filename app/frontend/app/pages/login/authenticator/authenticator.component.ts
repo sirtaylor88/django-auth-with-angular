@@ -22,11 +22,13 @@ export class AuthenticatorComponent {
     private authService: AuthService,
     private router: Router
   ) { }
+
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       code: '',
     })
   }
+  
   submit(){
     const formData = this.form.getRawValue();
     const data = this.loginData;

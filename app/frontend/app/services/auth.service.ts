@@ -23,6 +23,10 @@ export class AuthService {
     return this.http.post(`${environment.api}/two-factor`, body, {withCredentials: true})
   }
 
+  googleLogin(body: any) {
+    return this.http.post(`${environment.api}/google-auth`, body, {withCredentials: true})
+  }
+
   user() {
     return this.http.get(`${environment.api}/user`)
   }

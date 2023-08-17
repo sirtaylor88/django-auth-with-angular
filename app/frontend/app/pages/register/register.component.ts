@@ -16,6 +16,7 @@ export class RegisterComponent implements OnInit {
     private authService: AuthService,
     private router: Router
   ) { }
+
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       first_name: '',
@@ -25,6 +26,7 @@ export class RegisterComponent implements OnInit {
       password_confirm: ''
     })
   }
+  
   submit(){
     this.authService.register(this.form.getRawValue()).subscribe(
       () => {

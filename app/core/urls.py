@@ -11,4 +11,5 @@ urlpatterns = [
     path("forgot", views.ForgotAPIView.as_view(), name="forgot"),
     path("reset", views.ResetAPIView.as_view(), name="reset"),
     path("two-factor", views.TwoFactorAPIView.as_view(), name="two-factor"),
+    path("google-auth", views.GoogleAuthAPIView.as_view(), name="google-auth"),
 ]

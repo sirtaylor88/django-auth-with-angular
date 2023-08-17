@@ -14,6 +14,7 @@ import { ForgotComponent } from './pages/forgot/forgot.component';
 import { ResetComponent } from './pages/reset/reset.component';
 import { FormComponent } from './pages/login/form/form.component';
 import { AuthenticatorComponent } from './pages/login/authenticator/authenticator.component';
+import { GoogleLoginProvider, SocialLoginModule } from '@abacritt/angularx-social-login';
 
 @NgModule({
   declarations: [
@@ -31,13 +32,31 @@ import { AuthenticatorComponent } from './pages/login/authenticator/authenticato
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    SocialLoginModule
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
+    },
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              'clientId'
+            )
+          }
+        ],
+        onError: (err: any) => {
+          console.error(err);
+        }
+      },
     }
   ],
   bootstrap: [AppComponent]
